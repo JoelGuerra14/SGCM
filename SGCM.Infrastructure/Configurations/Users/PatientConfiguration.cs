@@ -12,6 +12,32 @@ public sealed class PatientConfiguration : IEntityTypeConfiguration<Patient>
         builder.ToTable("Patients");
         builder.HasKey(p => p.Id);
 
+        builder.Property(u => u.FirstName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(u => u.LastName)
+            .IsRequired()
+            .HasMaxLength(100);
+        builder.Property(p => p.Phone).HasMaxLength(20);
+        builder.Property(p => p.Address).HasMaxLength(250);
+        builder.Property(p => p.BloodType).HasMaxLength(5);
+        builder.Property(p => p.Allergies).HasMaxLength(500);
+        builder.Property(p => p.MedicalConditions).HasMaxLength(500);
+        builder.Property(p => p.EmergencyContactName).HasMaxLength(100);
+        builder.Property(p => p.EmergencyContactPhone).HasMaxLength(20);
+        builder.Property(p => p.PolicyNumber).HasMaxLength(50);
+
+        builder.Property(p => p.InsurerId)
+            .HasConversion(new StronglyTypedIdConverter<InsurerId>(guid => InsurerId.From(guid))!)
+            .HasColumnType("uniqueidentifier")
+            .IsRequired(false);
+
+        // Relación con Insurer
+        builder.HasOne(p => p.Insurer)
+            .WithMany()
+            .HasForeignKey(p => p.InsurerId)
+            .OnDelete(DeleteBehavior.SetNull);
         #region Properties
 
         builder.Property(p => p.Id)

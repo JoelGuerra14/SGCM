@@ -10,6 +10,7 @@ public sealed class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Doctor> Doctors => Set<Doctor>();
     public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<Insurer> Insurers => Set<Insurer>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

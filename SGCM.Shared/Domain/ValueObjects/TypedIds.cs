@@ -12,3 +12,10 @@ public readonly record struct PatientId(Guid Value)
     public static PatientId From(Guid value) => new(value);
     public override string ToString() => Value.ToString();
 }
+
+public readonly record struct InsurerId(Guid Value)
+{
+    public static InsurerId New() => new(Guid.CreateVersion7());
+    public static InsurerId From(Guid value) => new(value);
+    public override string ToString() => Value.ToString();
+}
