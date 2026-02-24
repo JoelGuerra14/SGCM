@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using SGCM.Application.Contracts;
 using SGCM.Application.Features.Auth.Commands;
+using SGCM.Application.Features.Patients.Commands;
 using SGCM.Shared.Result;
 
 namespace SGCM.Application;
@@ -10,11 +12,18 @@ public static class DependencyInjection
     public static void AddApplication(this IServiceCollection services)
     {
         AddAuthHandlers(services);
+        AddPatientHandlers(services);
     }
-    
+
     private static void AddAuthHandlers(this IServiceCollection services)
     {
         services.AddScoped<ICommandHandler<RegisterUserCommand, Result>, RegisterUserHandler>();
         services.AddScoped<ICommandHandler<ConfirmEmailCommand, Result>, ConfirmEmailHandler>();
+    }
+
+    private static void AddPatientHandlers(this IServiceCollection services)
+    {
+        services.AddScoped<IValidator<CreatePatientCommand>, CreatePatientCommandValidator>();
+        services.AddScoped<ICommandHandler<CreatePatientCommand, Result>, CreatePatientCommandHandler>();
     }
 }

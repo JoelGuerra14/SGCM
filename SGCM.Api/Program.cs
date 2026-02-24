@@ -1,9 +1,10 @@
-using System.Text.Json.Serialization;
 using SGCM.Api.Extensions;
 using SGCM.Api.Features.Auth;
+using SGCM.Api.Features.Patients;
 using SGCM.Application;
 using SGCM.Infrastructure;
 using SGCM.Shared.Exceptions;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapPatientEndpoints();
 
 //app.UseHttpsRedirection();
 
