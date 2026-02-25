@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
+using SGCM.Application.Features.Patients.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SGCM.Application.Features.Patients.Commands
+namespace SGCM.Application.Features.Patients.Validators
 {
     internal class CreatePatientCommandValidator : AbstractValidator<CreatePatientCommand>
     {

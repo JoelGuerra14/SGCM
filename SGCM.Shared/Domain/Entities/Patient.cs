@@ -41,10 +41,13 @@ public sealed class Patient
         };
     }
 
-    public void UpdateProfile(string phone, string? address, string? bloodType,
-        string? allergies, string? medicalConditions, string emergencyContactName,
-        string emergencyContactPhone, InsurerId? insurerId, string? policyNumber)
+    public void UpdateProfile(string firstName, string lastName, string phone,
+        string? address, string? bloodType, string? allergies, string? medicalConditions,
+        string emergencyContactName, string emergencyContactPhone,
+        InsurerId? insurerId, string? policyNumber)
     {
+        FirstName = firstName;
+        LastName = lastName;
         Phone = phone;
         Address = address;
         BloodType = bloodType;

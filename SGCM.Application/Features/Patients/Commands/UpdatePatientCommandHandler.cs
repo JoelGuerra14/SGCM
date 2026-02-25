@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace SGCM.Application.Features.Patients.Commands
 {
-    public sealed class CreatePatientCommandHandler : ICommandHandler<CreatePatientCommand, Result>
+    public sealed class UpdatePatientCommandHandler : ICommandHandler<UpdatePatientCommand, Result>
     {
         private readonly AppDbContext _dbContext;
-        private readonly IValidator<CreatePatientCommand> _validator;
+        private readonly IValidator<UpdatePatientCommand> _validator;
 
-        public CreatePatientCommandHandler(AppDbContext dbContext, IValidator<CreatePatientCommand> validator)
+        public UpdatePatientCommandHandler(AppDbContext dbContext, IValidator<UpdatePatientCommand> validator)
         {
             _dbContext = dbContext;
             _validator = validator;
         }
 
-        public async Task<Result> Handle(CreatePatientCommand command, CancellationToken cancellationToken = default)
+        public async Task<Result> Handle(UpdatePatientCommand command, CancellationToken cancellationToken = default)
         {
             var validationResult = await _validator.ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
@@ -32,27 +32,32 @@ namespace SGCM.Application.Features.Patients.Commands
                 return Result.Failure(Error.Validation("ValidationFailed", error.ErrorMessage));
             }
 
+            var patientId = PatientId.From(command.Id);
             var patient = await _dbContext.Patients
-                .FirstOrDefaultAsync(p => p.UserId == command.UserId, cancellationToken);
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == patientId, cancellationToken);
 
             if (patient is null)
-                return Result.Failure(Error.NotFound("Patient.NotFound", "No se encontró el paciente asociado a este usuario."));
+                return Result.Failure(Error.NotFound("Patient.NotFound", "El paciente no existe."));
 
             InsurerId? insurerId = command.InsurerId.HasValue ? InsurerId.From(command.InsurerId.Value) : null;
 
             patient.UpdateProfile(
-                        patient.FirstName,
-                        patient.LastName,
-                        command.Phone,
-                        command.Address,
-                        command.BloodType,
-                        command.Allergies,
-                        command.MedicalConditions,
-                        command.EmergencyContactName,
-                        command.EmergencyContactPhone,
-                        insurerId,
-                        command.PolicyNumber
-                    );
+                command.FirstName,
+                command.LastName,
+                command.Phone,
+                command.Address,
+                command.BloodType,
+                command.Allergies,
+                command.MedicalConditions,
+                command.EmergencyContactName,
+                command.EmergencyContactPhone,
+                insurerId,
+                command.PolicyNumber
+            );
+
+            patient.User.FirstName = command.FirstName;
+            patient.User.LastName = command.LastName;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
